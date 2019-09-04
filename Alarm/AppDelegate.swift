@@ -7,15 +7,23 @@
 //
 
 import UIKit
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (success, _) in
+            if success {
+                print("User allowed us to send alerts!")
+            }
+        }
         return true
     }
 
@@ -41,6 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        
+        let alert = UIAlertController(title: "Time's up!", message: nil, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Dismiss", style: .cancel, handler: nil)
+        alert.addAction(action)
+        window?.rootViewController?.present(alert, animated: true, completion: nil)
+    }
 }
 
